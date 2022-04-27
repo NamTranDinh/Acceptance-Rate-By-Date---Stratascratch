@@ -1,0 +1,12 @@
+select date, avg(accept)
+from
+(select se.date, 
+case when ac.user_id_receiver is null then 0
+else 1 end as accept
+
+from (select date,user_id_sender,user_id_receiver,action from fb_friend_requests where action='sent') as se
+left join (select date,user_id_sender,user_id_receiver,action from fb_friend_requests where action='accepted') as ac
+using(user_id_sender,user_id_receiver)
+) as source
+group by date
+order by date
