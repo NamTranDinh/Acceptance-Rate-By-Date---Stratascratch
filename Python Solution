@@ -1,0 +1,9 @@
+sent = fb_friend_requests[fb_friend_requests.action=='sent']
+
+accepted=fb_friend_requests[fb_friend_requests.action=='accepted']
+
+se_ac=sent.merge(accepted,on=['user_id_sender','user_id_receiver'],how='left',suffixes=['_se','_ac'],indicator=True)
+
+se_ac['rate']=[1 if i == 'both' else 0 for i in se_ac['_merge']]
+
+se_ac.groupby('date_se',as_index=False).agg({'rate':'mean'})
